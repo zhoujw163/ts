@@ -14,7 +14,7 @@ type TrimRight<S extends string> = S extends `${infer Rest}${' ' | '\n' | '\t'}`
 type TrimLeft<S extends string> = S extends `${' ' | '\n' | '\t'}${infer Rest}` ? TrimLeft<Rest> : S;
 type TrimResult = TrimLeft<TrimRight<'  abc  '>>; // 'abc'
 
-// 函数
+// 函数。使用 Function 约束泛型需要将 strictFunctionTypes 关闭，否则类型推倒会错误
 type CommonFn = (...args: any[]) => any;
 type GetParameters<T extends CommonFn> = T extends (...args: infer P) => any ? P : never;
 type GetParametersResult = GetParameters<(a: number, b: string) => void>; // [number, string]
@@ -30,6 +30,5 @@ type TestClass = {
 }
 type GetConstructorParameters<T extends CommonConstructor> = T extends new (...args: infer P) => any ? P : never;
 type GetConstructorParametersResult = GetConstructorParameters<TestClass> // [name: string]
-
 
 export {}
