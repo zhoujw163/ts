@@ -1,0 +1,93 @@
+# 声明文件
+declare let/const  // 声明全局变量
+declare function   // 声明全局方法
+declare class      // 声明全局类
+declare enum       // 声明全局枚举类型 
+declare namespace  // 声明（含有子属性的）全局对象
+declare module     // 声明（含有子属性的）全局对象
+interface/type     // 声明全局类型
+
+```typescript
+// 命名空间声明
+declare namespace jQuery {
+    type cssSelector = {
+        css: (key: string, value: string) => cssSelector
+    }
+    
+    export function $(read: () =>void): void;
+    export function $(selector: string): cssSelector;
+    export namespace $ {
+        function ajax(url:string, option:any): void
+    }
+}
+
+export = jQuery
+```
+
+```typescript
+// 使用模块声明
+declare module "jQuery" {
+    type cssSelector = {
+        css: (key: string, value: string) => cssSelector
+    }
+    
+    function $(read: () =>void): void;
+    function $(selector: string): cssSelector;
+    namespace $ {
+        function ajax(url:string, option:any): void
+    }
+
+    export = $;
+}
+```
+
+
+
+```typescript
+type Flag: string;
+
+declare const flagSymbol: unique symbol;
+
+declare function arg<T extends arg.Spec>(
+	spec: T,
+	options?: arg.Options
+): arg.Result<T>;
+
+declare namespace arg {
+	export function flag<T>(fn: T): T & { [flagSymbol]: true };
+
+	export const COUNT: Handler<number> & { [flagSymbol]: true };
+
+	export type Handler<T = any> = (
+		value: string,
+		name: string,
+		previousValue?: T
+	) => T;
+
+	export class ArgError extends Error {
+		constructor(message: string, code: string);
+
+		code: string;
+	}
+
+	export interface Spec {
+		[key: string]: string | Handler | [Handler];
+	}
+
+	export type Result<T extends Spec> = { _: string[] } & {
+		[K in keyof T]?: T[K] extends Handler
+			? ReturnType<T[K]>
+			: T[K] extends [Handler]
+			? Array<ReturnType<T[K][0]>>
+			: never;
+	};
+
+	export interface Options {
+		argv?: string[];
+		permissive?: boolean;
+		stopAtPositional?: boolean;
+	}
+}
+
+export = arg;
+```
